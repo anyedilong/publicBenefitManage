@@ -1,0 +1,150 @@
+<!--systemSetup  网站设置-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>网站设置</title>
+    <script src="../js/page/commen.js"></script>
+    <style>
+        .layui-form-item {
+            margin-bottom: 20px;
+        }
+        .upload-img {
+            width: 150px;
+            height: 150px;
+        }
+        .divmoren {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageBox">
+        <div class="page_content">
+            <form class="layui-form layui-row" action="" lay-filter="formData">
+                <div class="layui-col-md12">
+                    <div class="page_title">
+                        网站设置
+                        <div class="fr">
+                            <button type="button" class="layui-btn layui-btn-sm btn-submit btn-orange" id="resetBtn">重置</button>
+                            <button type="button" class="layui-btn layui-btn-sm btn-submit btn-green" lay-submit="" lay-filter="formSubmit">提交</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md8">
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">平台logo:</label>
+                                <div class="layui-input-block">
+                                    <div class="upload-img">
+                                        <img src="../img/upload.png" alt="" id="upImg">
+                                        <input type="file" class="upload-inp" id="upInp" accept="image/png, image/jpeg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">机构名称:</label>
+                                <div class="layui-input-block divmoren">
+                                    <input type="hidden" name="id">
+                                    马龙区卫健委
+                                    <!--<input type="text" name="orgName" lay-verify="required" autocomplete="off" class="layui-input">-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">平台名称:</label>
+                                <div class="layui-input-block divmoren">
+                                    公众惠民便民服务平台
+                                    <!--<input type="text" name="platName" lay-verify="required" autocomplete="off" class="layui-input">-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">首页欢迎词:</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="welcomeContent" lay-verify="required|textMax" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        layui.use(['form'], function(){
+            var form = layui.form;
+            var $ = layui.jquery;
+            var files = null;
+            form.verify({
+                textMax: function (value, item) {
+                    if (value == 1) {
+                        console.log(item)
+                    }
+                }
+            });
+            // 详情
+            var ids = '';
+            getXQ();
+            function getXQ () {
+                getAjax('/web/xq', {}, function (resultMsg) {
+                    form.val('formData', resultMsg.data);
+                    $('#upImg').attr('src', resultMsg.data.logo);
+                    ids = resultMsg.data.id
+                    // files = new File([], '', {});
+                });
+            };
+            // 证件上传
+            $('#upInp').change(function () {
+                files = $('#upInp')[0].files[0]; //获取文件流
+                $('#upImg').attr('src', getObjectURL(files));
+            });
+            form.on('submit(formSubmit)', function (data) {
+                var newsUrl = $('#upImg').attr('src');
+                var jsonParam = new FormData();
+                if (newsUrl == '../img/upload.png'){
+                    layer.msg('请选择网站logo', {icon: 5,time:1000,anim: 6});
+                    $('.upload-img').css('border-color', '#FF5722')
+                } else {
+                    $('.upload-img').css('border-color', '#E8EAED')
+                    if (files) {
+                        jsonParam.append('logo',files);
+                    }
+                    jsonParam.append('welcomeContent', data.field.welcomeContent);
+                    jsonParam.append('id', ids);
+                    imgAjax('/web/save', jsonParam, function (resultMsg) {
+                        if (resultMsg.retCode == 0) {
+                            var layerOne = layer.open({
+                                title: '提示',
+                                skin: 'my-layui-layer', //样式类名
+                                icon: 1,
+                                content: '成功'
+                            });
+                        }
+                    })
+                }
+                return false;
+            });
+            $('#resetBtn').click(function () {
+                // $('#upImg').attr('src', '../img/upload.png');
+                getXQ();
+            });
+        });
+    });
+</script>
+</html>

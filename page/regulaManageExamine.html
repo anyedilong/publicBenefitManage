@@ -1,0 +1,323 @@
+<!--regulaManageExamine  政策法规查看-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>政策法规</title>
+    <script src="../js/page/commen.js"></script>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <script type="text/javascript" charset="utf-8" src="../../baiduUEditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../baiduUEditor/ueditor.all.min.js"> </script>
+    <script type="text/javascript" charset="utf-8" src="../../baiduUEditor/lang/zh-cn/zh-cn.js"></script>
+    <style>
+        .layui-form-item {
+            margin-bottom: 20px;
+        }
+        .upload-img {
+            width: 120px;
+            height: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageBox">
+        <div class="page_content">
+            <form class="layui-form layui-row " action="" lay-filter="formData">
+                <div class="layui-col-md12">
+                    <div class="page_title">
+                        <span id="pageType"></span>法规
+                        <div class="fr" id="shenheBtn" style="display: none;">
+                            <button type="button" class="layui-btn layui-btn-sm btn-submit btn-green" lay-submit="" lay-filter="formSubmit" audit="2">通过</button>
+                            <button type="button" class="layui-btn layui-btn-sm btn-submit btn-orange" lay-submit="" lay-filter="formSubmit" audit="5">退回</button>
+                        </div>
+                        <div class="fr" id="chakanBtn" style="display: none;">
+                            <button class="layui-btn layui-btn-sm btn-submit btn-green">修改</button>
+                        </div>
+                    </div>
+                </div>
+                <fieldset class="layui-elem-field" style="color: #979797;display: none; margin-bottom: 20px">
+                    <legend>退回原因</legend>
+                    <div class="layui-field-box" id="returnReasons"></div>
+                </fieldset>
+                <div class="layui-col-md8" style="margin-top: 20px">
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">法规标题</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="policyTitle" disabled lay-verify="required" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">法规类别</label>
+                                <div class="layui-input-block">
+                                    <select name="type" id="type" disabled>
+                                        <option value="1">公卫</option>
+                                        <option value="2">家医</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">资讯来源</label>
+                                <div class="layui-input-block">
+                                    <select name="policyLy" id="policyLy" lay-filter="policyLy" disabled>
+                                        <option value="1">原创</option>
+                                        <option value="2">转载</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label"></label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="reprintedFrom" id="reprintedFrom" disabled placeholder="请输入转载来源" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">法规封面</label>
+                                <div class="layui-input-block">
+                                    <div class="upload-img">
+                                        <img src="../img/upload.png" alt="" id="upImg">
+                                        <input type="file" class="upload-inp" id="upInp" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">法规内容</label>
+                        <div class="layui-input-block">
+                            <!--这里是文本编辑器div-->
+                            <!-- 百度富文本框start -->
+                            <script id="editor" type="text/plain" style="width:110%;height:500px;"></script>
+                            <script type="text/javascript">
+                            var ue = UE.getEditor('editor', {
+                                toolbars: [
+                                    [
+                                        'undo', //撤销
+                                        'bold', //加粗
+                                        'underline', //下划线
+                                        'preview', //预览
+                                        'horizontal', //分隔线
+                                        'inserttitle', //插入标题
+                                        'cleardoc', //清空文档
+                                        'fontfamily', //字体
+                                        'fontsize', //字号
+                                        'paragraph', //段落格式
+                                        'simpleupload', //单图上传
+                                        'insertimage', //多图上传
+                                        'inserttable', //插入表格
+                                        'justifyleft', //居左对齐
+                                        'justifyright', //居右对齐
+                                        'justifycenter', //居中对
+                                        'justifyjustify', //两端对齐
+                                        'forecolor', //字体颜色
+                                        'fullscreen', //全屏
+                                        'edittip ', //编辑提示
+                                        'customstyle', //自定义标题
+                                    ]
+                                ]
+                            });
+                            // 获取值
+                            function getContent() {
+                                return UE.getEditor('editor').getContent();
+                            }
+                            // 设置值
+                            function setContent(content) {
+                                $("#content").html(content);
+                                try {
+                                    UE.getEditor('editor').setContent($("#content").html());
+                                } catch (err) {
+                                    console.log("editor加载中");
+                                }
+                            }
+                            // 不可编辑方法
+                            function setDisabled() {
+                                UE.getEditor('editor').setDisabled('fullscreen');
+                                // disableBtn("enable");
+                            }
+                            // 开启编辑方法
+                            function setEnabled() {
+                                UE.getEditor('editor').setEnabled();
+                                // enableBtn();
+                            }
+                            // function disableBtn(str) {
+                            //     var div = document.getElementById('btns');
+                            //     var btns = UE.dom.domUtils.getElementsByTagName(div, "button");
+                            //     for (var i = 0, btn; btn = btns[i++];) {
+                            //         if (btn.id == str) {
+                            //             UE.dom.domUtils.removeAttributes(btn, ["disabled"]);
+                            //         } else {
+                            //             btn.setAttribute("disabled", "true");
+                            //         }
+                            //     }
+                            // }
+                            // function enableBtn() {
+                            //     var div = document.getElementById('btns');
+                            //     var btns = UE.dom.domUtils.getElementsByTagName(div, "button");
+                            //     for (var i = 0, btn; btn = btns[i++];) {
+                            //         UE.dom.domUtils.removeAttributes(btn, ["disabled"]);
+                            //     }
+                            // }
+                            // editor就绪函数
+                            ue.ready(function() {
+                                UE.getEditor('editor').setContent($("#content").html());
+                                setDisabled();
+                            })
+                            </script>
+                            <div id="content" style="display:none"></div>
+                            <!-- 百度富文本框end -->
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!--退回原因——弹窗-->
+        <div class="page_content" id="shenheBox" style="display: none">
+            <form class="layui-form" lay-filter="shenheform" action="" id="shenheform">
+                <div class="layui-form-item">
+                    <div style="margin-bottom: 20px; font-size: 14px">退回原因</div>
+                    <div>
+                        <textarea name="returnReasons" lay-verify="req" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item" style="display: none;">
+                    <button id="addBtn" lay-submit lay-filter="addBtn" type="button" class="layui-btn layui-btn-warm">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        layui.use(['form'], function(){
+            var form = layui.form;
+            form.verify({
+                req:function (value,item) {
+                    if(item.name == 'returnReasons'){
+                        if(value.trim() == ''){
+                            return '退回原因不能为空！';
+                        }else if(value.length > 100){
+                            return '退回原因不能大于100个字符！'
+                        }
+                    }
+                }
+            });
+            var files = null;
+            // 判断新增还是修改
+            var ids = GetQueryString('id');
+            var pageType = GetQueryString('type');
+            var status = '';
+            getAjax('/sys/policyInspect/getPolicyInfo', {id: ids}, function (resultMsg) {
+                form.val('formData', resultMsg.data);
+                layui.form.render("select");
+                $('#upImg').attr('src', resultMsg.data.policyUrl);
+                setContent(resultMsg.data.policyContent);
+                status = resultMsg.data.status;
+                $('#returnReasons').html(resultMsg.data.returnReasons);
+            });
+            if (pageType == 'chakan') {
+                $('#pageType').html('查看');
+                if (status == '5') {
+                    console.log(status)
+                    // 退回
+                    $('.layui-elem-field').css('display', 'block');
+                    // $('#chakanBtn').css('display', 'block');
+                } else {
+                    if (status == '0' || status == '5') {
+                        // $('#chakanBtn').css('display', 'block');
+                    }
+                }
+            } else {
+                $('#pageType').html('审核');
+                $('#shenheBtn').css('display', 'block');
+                // 审核
+                var audit = '';
+                form.on('submit(formSubmit)', function (data) {
+                    audit = $(this).attr('audit');
+                    if (audit == '5') {
+                        layer.open({
+                            type:1,
+                            title: '退回',
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['460px', '320px'],
+                            content: $('#shenheBox'),
+                            btn: ['关闭', '确认'],
+                            btn1: function (index) {
+                                layer.close(index);
+                            },
+                            btn2: function (index) {
+                                $('#addBtn').click();
+                                return false;
+                            }
+                        });
+                    } else {
+                        layer.open({
+                            type:1,
+                            title: '审核',
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">您确定要进行审核通过吗?</div>',
+                            btn: ['关闭', '确认'],
+                            btn1: function (index) {
+                                layer.close(index);
+                            },
+                            btn2: function (index) {
+                                editStatus(ids, audit, '');
+                                return false;
+                            }
+                        });
+                    }
+                    return false; //很重要的一句话，不能删
+                });
+            }
+            function editStatus (ids, audit, returnReasons) {
+                // 更改状态
+                getAjax('/sys/policyInspect/operate', {id: ids, status: audit, returnReasons: returnReasons}, function (resultMsg) {
+                    if (resultMsg.retCode == 0) {
+                        var layerOne = layer.open({
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            icon: 1,
+                            content: '成功',
+                            yes: function(){
+                                layer.close(layerOne);
+                                window.location.href = 'regulationManage.html';
+                            }
+                        });
+                    } else {
+                        layer.open({
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            content: resultMsg.retMsg
+                        });
+                    }
+                });
+            }
+            $('#addBtn').click(function () {
+                form.on('submit(addBtn)', function(data){
+                    editStatus (ids, audit, data.field.returnReasons);
+                    return false; //很重要的一句话，不能删
+                });
+            });
+            $('#chakanBtn').find('button').click(function () {
+                window.location.href = 'regulationManageAdd.html?id=' + ids;
+                return false; //很重要的一句话，不能删
+            });
+        });
+    });
+</script>
+</html>

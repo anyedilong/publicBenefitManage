@@ -1,0 +1,239 @@
+<!--healthGuide 保健指导-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>保健指导</title>
+    <script src="../js/page/commen.js"></script>
+    <style>
+        .layui-form-item {
+            margin-bottom: 20px;
+        }
+        .upload-img {
+            width: 120px;
+            height: 120px;
+            float: left;
+            margin: 0 20px 20px 0;
+            position: relative;
+        }
+        .layui-form-label {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageBox">
+        <div class="page_content">
+            <form class="layui-form layui-row" action="" lay-filter="formData" id="formData">
+                <div class="layui-col-md12">
+                    <div class="page_title">
+                        保健指导
+                        <div class="fr">
+<!--                            <button type="reset" class="layui-btn layui-btn-sm btn-submit btn-orange" id="resetBtn">重置</button>-->
+                            <button type="button" class="layui-btn layui-btn-sm btn-submit btn-orange " id="reduction">重置</button>
+                            <button type="button" class="layui-btn layui-btn-sm btn-submit btn-green" lay-submit="" lay-filter="formSubmit">提交</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md8">
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">中医体质</label>
+                                <div class="layui-input-block">
+                                    <select name="physicalType" id="physicalType" lay-filter="physicalType"></select>
+                                    <input type="hidden" name="id">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">情志调摄</label>
+                                <div class="layui-input-block">
+                                    <textarea name="emotionContent" lay-verify="required|textMax" class="layui-textarea" lay-reqtext="请输入情志调摄的保健指导内容！"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">饮食调养</label>
+                                <div class="layui-input-block">
+                                    <textarea name="dietContent" lay-verify="required|textMax" class="layui-textarea" lay-reqtext="请输入饮食调养的保健指导内容！"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">起居调摄</label>
+                                <div class="layui-input-block">
+                                    <textarea name="livingContent" lay-verify="required|textMax" class="layui-textarea" lay-reqtext="请输入起居调摄的保健指导内容！"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">运动保健</label>
+                                <div class="layui-input-block">
+                                    <textarea name="sportsContent" lay-verify="required|textMax" class="layui-textarea" lay-reqtext="请输入运动保健的保健指导内容！"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">穴位保健</label>
+                                <div class="layui-input-block">
+                                    <textarea name="acupointContent" lay-verify="required|textMax" class="layui-textarea" lay-reqtext="请输入穴位保健的保健指导内容！"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">穴位保健图片</label>
+                                <div class="layui-input-block">
+                                    <div class="upload-img inpBox" style="cursor: pointer">
+                                        <img src="../img/upload.png" alt="" id="acupointImageOne">
+                                        <input style="display: none" type="file" class="upload-inp" id="acupointImageOneFile">
+                                        <input type="hidden" class="imgurl" name="acupointImageOne" accept="image/png, image/jpeg">
+                                    </div>
+                                    <div class="upload-img inpBox" style="cursor: pointer">
+                                        <img src="../img/upload.png" alt="" id="acupointImageTwo">
+                                        <input style="display: none" type="file" class="upload-inp" id="acupointImageTwoFile">
+                                        <input type="hidden" class="imgurl" name="acupointImageTwo" accept="image/png, image/jpeg">
+                                    </div>
+                                    <div class="upload-img inpBox" style="cursor: pointer">
+                                        <img src="../img/upload.png" alt="" id="acupointImageThree">
+                                        <input style="display: none" type="file" class="upload-inp" id="acupointImageThreeFile">
+                                        <input type="hidden" class="imgurl" name="acupointImageThree" accept="image/png, image/jpeg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">其他</label>
+                                <div class="layui-input-block">
+                                    <textarea name="otherContent" class="layui-textarea"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        layui.use(['form'], function(){
+            var form = layui.form;
+            var $ = layui.jquery;
+            var files = {};
+            // var patrn = /[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘'，。、]/im;
+            // var reg = /^((?!list|news|index).)*$/
+            form.verify({
+                textMax: function (value, item) {
+                    if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                        return '保健指导内容不能有特殊字符！';
+                    // }else if(/^((?!list|news|index).)*$/.test(value)){
+                    }
+                    // else if(!patrn.test(value)){
+                    //     return '保健指导内容不能有特殊字符！';
+                    // }
+                }
+            });
+            getTizhi();
+            function getTizhi () {
+                getAjax('/guidance/getPhysicalType', {}, function (resultMsg) {
+                    if(resultMsg.retCode == 0){
+                        $.each(resultMsg.data, function (i, item) {
+                            $("#physicalType").append('<option value="' + item.code + '">' + item.name + '</option>');
+                        });
+                        layui.form.render("select");
+                        getXQ(resultMsg.data[0].code);
+                    }
+                });
+            }
+            $('#resetBtn').click(function () {
+                resetImg();
+            });
+            $('#reduction').click(function () {
+                getXQ($('#physicalType').val());
+            });
+            // 详情
+            form.on('select(physicalType)', function(data){
+                getXQ(data.value);
+            });
+            function getXQ (data) {
+                resetImg();
+                // $('input').val('');
+                $('textarea').val('');
+                getAjax('/guidance/xq', {physicalType: data}, function (resultMsg) {
+                    if (resultMsg.retCode == 0) {
+                        if (resultMsg.data) {
+                            form.val('formData', resultMsg.data);
+                            $('#acupointImageOne').attr('src', resultMsg.data.acupointImageOne ? resultMsg.data.acupointImageOne : '../img/upload.png');
+                            $('#acupointImageTwo').attr('src', resultMsg.data.acupointImageTwo ? resultMsg.data.acupointImageTwo : '../img/upload.png');
+                            $('#acupointImageThree').attr('src', resultMsg.data.acupointImageThree ? resultMsg.data.acupointImageThree : '../img/upload.png');
+                        }
+                    }
+                });
+            };
+            $('.inpBox img').click(function () {
+                if (files.length >= 3) {
+                    layer.msg('最多上传3张图片', {icon: 5,time:1000,anim: 6});
+                } else {
+                    return $(this).next().click();
+                }
+            });
+            // 证件上传
+            $('.inpBox input').change(function () {
+                var ids = $(this).attr('id');
+                files[ids] = $(this)[0].files[0];
+                $(this).prev().attr('src', getObjectURL($(this)[0].files[0]));
+                $(this).next().val('');
+            });
+            form.on('submit(formSubmit)', function (data) {
+                var jsonParam = new FormData();
+                jsonParam.append('id', data.field.id);
+                jsonParam.append('physicalType', data.field.physicalType);
+                jsonParam.append('emotionContent', data.field.emotionContent);
+                jsonParam.append('dietContent', data.field.dietContent);
+                jsonParam.append('livingContent', data.field.livingContent);
+                jsonParam.append('sportsContent', data.field.sportsContent);
+                jsonParam.append('acupointContent', data.field.acupointContent);
+                jsonParam.append('otherContent', data.field.otherContent);
+                for (var key in files) {
+                    jsonParam.append(key, files[key]);
+                }
+                imgAjax('/guidance/save', jsonParam, function (resultMsg) {
+                    if (resultMsg.retCode == 0) {
+                        var layerOne = layer.open({
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            icon: 1,
+                            content: $("#physicalType option:selected").text() +'的保健指导内容保存成功!'
+                        });
+                    }
+                })
+                return false;
+            });
+            function resetImg() {
+                files = {};
+                $('.inpBox img').attr('src', '../img/upload.png');
+            }
+        });
+    });
+</script>
+</html>

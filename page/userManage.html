@@ -1,0 +1,223 @@
+<!--userManage.html  用户管理-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <script src="../js/page/commen.js"></script>
+    <style>
+        .layui-form-label {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="pageBox">
+    <div class="page_title">
+        用户管理
+    </div>
+    <form class="layui-form" action="">
+        <div class="layui-inline">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户账户</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="username" autocomplete="off" class="layui-input" placeholder="用户账户">
+                </div>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-form-item">
+                <label class="layui-form-label">开始日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="startDate" class="layui-input date_scope" id="startDate" placeholder="注册开始时间">
+                </div>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-form-item">
+                <label class="layui-form-label">结束日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="endDate" class="layui-input date_scope" id="endDate" placeholder="注册结束时间">
+                </div>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <select name="status" id="status" lay-filter="status">
+                        <option value="">全部</option>
+                        <option value="0">启用</option>
+                        <option value="1">禁用</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search">搜索</button>
+        </div>
+    </form>
+    <div class="data-card charts_box">
+        <table class="layui-hide" id="table" lay-filter="dataList" lay-skin="row"></table>
+        <!--状态（1.未发布 2.撤回 3.发布 4.置顶 ）-->
+        <script type="text/html" id="trStatus">
+            {{# if(d.isRealName == '0'){ }}
+            <a class="m-gray4" lay-event="state_1">未实名</a>
+            {{# } else if(d.isRealName == '1') { }}
+            <a class="m-gray4" lay-event="state_1">身份证实名认证</a>
+            {{# } else if(d.isRealName == '2') { }}
+            <a class="m-gray4" lay-event="state_1">银行卡实名认证</a>
+            {{# } }}
+        </script>
+        <script type="text/html" id="trBtn">
+            {{# if(d.status == '0'){ }}
+            {{ parent.getBtnPower(['禁用'], '', parent.menuYHGL) }}
+<!--            <a class="m-green1" lay-event="禁用">禁用</a>-->
+            {{# } else if(d.status == '1') { }}
+            {{ parent.getBtnPower(['启用'], '', parent.menuYHGL) }}
+<!--            <a class="m-green1" lay-event="启用">启用</a>-->
+            {{# } }}
+        </script>
+        <div id="laypage"></div>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        layui.use(['form','laydate','table','laypage'], function(){
+            var $ = layui.$;
+            var form = layui.form;
+            var laydate = layui.laydate;
+            var nowTime = new Date().getTime();
+            var startDate = laydate.render({
+                elem: '#startDate',
+                max: nowTime,
+                done: function (value, date) {
+                    endDate.config.min ={
+                        year: date.year,
+                        month: date.month - 1,
+                        date: date.date
+                    };
+                }
+            });
+            var endDate = laydate.render({
+                elem: '#endDate',
+                max: nowTime,
+                done: function (value, date) {
+                    // $('#endDate').val('');
+                    if ($.trim(value) == '') {
+                        var curDate = new Date();
+                        date = {'date': curDate.getDate(), 'month': curDate.getMonth() + 1, 'year': curDate.getFullYear()};
+                    }
+                    startDate.config.max = date;
+                    startDate.config.max.month = date.month - 1;
+                }
+            });
+            var table = layui.table;
+            var laypage = layui.laypage;
+            var tableobj = {
+                elem: '#table',
+                cellMinWidth: 80,
+                even: true,
+                cols: [[
+                    {field:'phone', title: '账户'},
+                    {field:'name', title: '姓名'},
+                    {fixed: 'right', title: '实名认证', toolbar: '#trStatus'},
+                    {fixed: 'right', title: '管理', toolbar: '#trBtn'}
+                ]],
+                data: []
+            };
+            var pageobj = {
+                elem: 'laypage',
+                count: 0, //数据总数
+                limit: 10,  //得到每页显示的条数
+                curr: 1,  //得到当前页，以便向服务端请求对应页的数据。
+                prev: '<em><</em>',
+                next: '<em>></em>',
+                layout: ['count', 'prev', 'page', 'next']
+            };
+            //监听工具条
+            table.on('tool(dataList)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var trdata = obj.data; //获得当前行数据
+                var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+                var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+                if ($(this).attr('class') == 'm-green1') {
+                    // 状态（1.未发布 2.撤回 3.发布 4.置顶 ）
+                    if(layEvent == '禁用'){
+                        layer.open({
+                            id: 'login',
+                            type: 1,
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">您确定禁用'+trdata.name+'('+trdata.phone+')用户吗？</div>', //iframe的url
+                            btn: ['关闭', '确认'],
+                            btn2: function (index) {
+                                getAjax('/sys/customer/userstatus', {id: trdata.id, status: 1}, function (resultMsg) {
+                                    layer.close(index);
+                                    getList(jsonParam);
+                                });
+                                return false;
+                            }
+                        });
+                    } else if (layEvent == '启用') {
+                        layer.open({
+                            id: 'login',
+                            type: 1,
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">您确定启用'+trdata.name+'('+trdata.phone+')用户吗？</div>', //iframe的url
+                            btn: ['关闭', '确认'],
+                            btn2: function (index) {
+                                getAjax('/sys/customer/userstatus', {id: trdata.id, status: 0}, function (resultMsg) {
+                                    layer.close(index);
+                                    getList(jsonParam);
+                                });
+                                return false;
+                            }
+                        });
+                    }
+                }
+            });
+            var jsonParam = {
+                pageNo: '1', // 起始页， 默认10
+                pageSize: '10', // 页大小， 默认10
+                phone:'',
+                status:'',
+                StartCreationTime:'',
+                EndCreationTime:'',
+            };
+            function getList (jsonParam) {
+                getAjax('/sys/customer/userlist', jsonParam, function (resultMsg) {
+                    tableobj.data = resultMsg.data.list;
+                    pageobj.count = resultMsg.data.count;
+                    table.render(tableobj);
+                    laypage.render(pageobj);
+                });
+            }
+            getList(jsonParam);
+            pageobj.jump = function (obj) {
+                jsonParam.pageSize = obj.limit;
+                jsonParam.pageNo = obj.curr;
+                getAjax('/sys/customer/userlist', jsonParam, function (resultMsg) {
+                    tableobj.data = resultMsg.data.list;
+                    table.render(tableobj);
+                });
+            };
+            form.on('submit(search)', function (data) {
+                jsonParam.phone = data.field.username.trim();
+                jsonParam.StartCreationTime = data.field.startDate;
+                jsonParam.EndCreationTime = data.field.endDate;
+                jsonParam.status = data.field.status;
+                getList(jsonParam);
+                return false;
+            });
+        });
+    })
+</script>
+</html>

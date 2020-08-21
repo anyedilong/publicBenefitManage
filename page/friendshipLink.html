@@ -1,0 +1,272 @@
+<!--friendshipLink.html  友情链接-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>友情链接</title>
+    <script src="../js/page/commen.js"></script>
+    <style>
+        .layui-form-label{
+            width: 90px;
+        }
+        .layui-input-block{
+            margin-left: 120px;
+        }
+    </style>
+</head>
+<body>
+<div class="pageBox">
+    <div class="page_title">
+        栏目管理
+        <div class="tableAddBtn fr cursorP" id="tableAddBtn">
+            <i class="iconfont fl">&#xe61e;</i>
+            <span class="fl">添加友情链接</span>
+        </div>
+    </div>
+    <form class="layui-form" action="">
+        <div class="layui-inline">
+            <div class="layui-form-item">
+                <label class="layui-form-label">友情链接名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" autocomplete="off" class="layui-input" placeholder="友情链接名称">
+                </div>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-form-item">
+                <label class="layui-form-label">开始日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="startDate" class="layui-input date_scope" id="startDate" placeholder="录入开始时间">
+                </div>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-form-item">
+                <label class="layui-form-label">结束日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="endDate" class="layui-input date_scope" id="endDate" placeholder="录入结束时间">
+                </div>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search">搜索</button>
+        </div>
+    </form>
+    <div class="data-card charts_box">
+        <table class="layui-hide" id="table" lay-filter="dataList" lay-skin="row"></table>
+        <script type="text/html" id="trImg">
+            <div class="table-imgbox">
+                <img class="table-img" src="{{d.imageUrl}}" alt="">
+            </div>
+        </script>
+        <script type="text/html" id="trBtn">
+            <a class="m-green1" lay-event="删除">删除</a>
+        </script>
+        <div id="laypage"></div>
+    </div>
+</div>
+<!--弹框-->
+<div class="popup-box" id="popup-box">
+    <form class="layui-form" lay-filter="formData" action="" id="addform">
+        <div class="layui-form-item">
+            <label class="layui-form-label">友情链接名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" lay-verify="req|yymcLen" autocomplete="off" class="layui-input" placeholder="请填写友情链接名称">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">超链接地址</label>
+            <div class="layui-input-block">
+<!--                <input type="hidden" name="id" class="layui-input">-->
+                <input type="text" name="linkUrl" lay-verify="req" autocomplete="off" class="layui-input" placeholder="请填写超链接地址">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <button id="addBtn" lay-submit lay-filter="addBtn" type="button" class="layui-btn layui-btn-warm">保存</button>
+        </div>
+    </form>
+</div>
+<script>
+    $(function () {
+       var roleType = localStorage.getItem('roleType')
+       if(roleType === '1'){
+          $("#tableAddBtn").hide()
+       }
+        layui.use(['form','table','laypage','laydate'], function(){
+            var form = layui.form;
+            var table = layui.table;
+            var laypage = layui.laypage;
+            var laydate = layui.laydate;
+            var nowTime = new Date().getTime();
+            var startDate = laydate.render({
+                elem: '#startDate',
+                max: nowTime,
+                done: function (value, date) {
+                    endDate.config.min ={
+                        year: date.year,
+                        month: date.month - 1,
+                        date: date.date
+                    };
+                }
+            });
+            var endDate = laydate.render({
+                elem: '#endDate',
+                max: nowTime,
+                done: function (value, date) {
+                    // $('#endDate').val('');
+                    if ($.trim(value) == '') {
+                        var curDate = new Date();
+                        date = {'date': curDate.getDate(), 'month': curDate.getMonth() + 1, 'year': curDate.getFullYear()};
+                    }
+                    startDate.config.max = date;
+                    startDate.config.max.month = date.month - 1;
+                }
+            });
+            // 列表
+            var tableobj = {
+                elem: '#table',
+                cellMinWidth: 80,
+                even: true,
+                cols: [[
+                    {field: 'name', title: '合作伙伴名称',minWidth:100},
+                    {field: 'linkUrl', title: '超链接地址',minWidth:200},
+                    {fixed: 'right', title: '管理', toolbar: '#trBtn', minWidth: 100}
+                ]],
+                data: []
+            };
+            form.verify({
+                req:function (value,item) {
+                    if(item.name == 'name'){
+                        if(value.trim() == ''){
+                            return '请输入友情链接名称！';
+                        }else if(value.length > 8){
+                            return '友情链接名称不能超过8个字符！';
+                        }else if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)){
+                            return '友情链接名称内不能包含特殊字符！';
+                        }
+                    } else if(item.name == 'linkUrl'){
+                        if(value.trim() == ''){
+                            return '请输入超链接地址！';
+                        }else if(!new RegExp("^((ht|f)tps?):\\/\\/[\\w\\-]+(\\.[\\w\\-]+)+([\\w\\-.,@?^=%&:\\/~+#]*[\\w\\-@?^=%&\\/~+#])?$").test(value)){
+                            return '请输入正确超链接地址！';
+                        }
+                    }
+                },
+                yymcLen: function (value, item) {
+                    if (value.length > 20) {
+                        if (item.name == 'name') {
+                            return '友情链接名称不能超过20个字符！';
+                        }
+                    }
+                }
+            });
+            var pageobj = {
+                elem: 'laypage',
+                count: 0, //数据总数
+                limit: 10,  //得到每页显示的条数
+                curr: 1,  //得到当前页，以便向服务端请求对应页的数据。
+                layout: ['count', 'prev', 'page', 'next']
+            };
+            var jsonParam = {
+                pageNo: '1', // 起始页， 默认10
+                pageSize: '10', // 页大小， 默认10
+                name: '',
+            };
+            function getList (jsonParam) {
+                getAjax('/sys/links/getLinklist', jsonParam, function (resultMsg) {
+                    tableobj.data = resultMsg.data.list;
+                    pageobj.count = resultMsg.data.count;
+                    table.render(tableobj);
+                    laypage.render(pageobj);
+                });
+            }
+            getList(jsonParam);
+            pageobj.jump = function (obj) {
+                jsonParam.pageSize = obj.limit
+                jsonParam.pageNo = obj.curr
+                getAjax('/sys/links/getLinklist', jsonParam, function (resultMsg) {
+                    tableobj.data = resultMsg.data.list;
+                    table.render(tableobj);
+                });
+            };
+            laypage.render(pageobj);
+            form.on('submit(search)', function (data) {
+                jsonParam.name = data.field.name.trim();
+                jsonParam.StartCreationTime = data.field.startDate;
+                jsonParam.EndCreationTime = data.field.endDate;
+                getList(jsonParam);
+                return false; //很重要的一句话，不能删
+            });
+            //监听工具条
+            var layerDel = null;
+            table.on('tool(dataList)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var formdata = obj.data; //获得当前行数据
+                var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+                var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+                if ($(this).attr('class') == 'm-green1') {
+                    if(layEvent === '删除'){
+                        layerDel = layer.open({
+                            id: 'login',
+                            type: 1,
+                            title: '提示',
+                            closeBtn: 0,
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">确定删除该条数据吗</div>', //iframe的url
+                            btn: ['关闭', '确认'],
+                            btn2: function () {
+                                getAjax('/sys/links/delLink', {id: formdata.id}, function (resultMsg) {
+                                    getList(jsonParam);
+                                    layer.close(layerDel);
+                                });
+                                return false;
+                            }
+                        });
+                    }
+                }
+            });
+            var layerAdd = null;
+            // 新增
+            $('#tableAddBtn').click(function () {
+                $("#addform")[0].reset();
+                layerAdd = layer.open({
+                    type: 1,
+                    skin: 'my-layui-layer', //加上边框
+                    title: '添加友情链接',
+                    area: ['460px', '290px'], //宽高
+                    content: $('#popup-box'),
+                    shade: false,
+                    btn: ['关闭', '确认'],
+                    btn1: function (index) {
+                        layer.close(layerAdd);
+                    },
+                    btn2: function () {
+                        $('#addBtn').click();
+                        return false;
+                    }
+                });
+            });
+            $('#addBtn').click(function () {
+                form.on('submit(addBtn)', function(data){
+                    console.log(data)
+                    getAjax('/sys/links/addLink', data.field, function (resultMsg) {
+                        layer.open({
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            icon: 1,
+                            content: '保存成功',
+                            yes: function(){
+                                layer.closeAll();
+                                getList(jsonParam);
+                            }
+                        });
+                    })
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

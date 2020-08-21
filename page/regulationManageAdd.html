@@ -1,0 +1,296 @@
+<!--regulationManageAdd.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加政策法规</title>
+    <script src="../js/page/commen.js"></script>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <script type="text/javascript" charset="utf-8" src="../../baiduUEditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../baiduUEditor/ueditor.all.min.js"> </script>
+    <script type="text/javascript" charset="utf-8" src="../../baiduUEditor/lang/zh-cn/zh-cn.js"></script>
+    <style>
+        .layui-form-item {
+            margin-bottom: 20px;
+        }
+        .upload-img {
+            width: 120px;
+            height: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageBox">
+        <div class="page_content">
+            <form class="layui-form layui-row " action="" lay-filter="formData">
+                <div class="layui-col-md12">
+                    <div class="page_title">
+                        <span id="pageType"></span>法规
+                        <div class="fr">
+                            <button type="button" class="layui-btn layui-btn-sm btn-submit btn-green" lay-submit="" lay-filter="formSubmit">保存</button>
+                            <button type="reset" class="layui-btn layui-btn-sm btn-submit btn-orange" id="resetBtn">重置</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md8">
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">法规标题</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="policyTitle" lay-verify="req" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">法规类别</label>
+                                <div class="layui-input-block">
+                                    <select name="type" id="type">
+                                        <option value="1">公卫</option>
+                                        <option value="2">家医</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">法规来源</label>
+                                <div class="layui-input-block">
+                                    <select name="policyLy" id="policyLy" lay-filter="policyLy">
+                                        <option value="1">原创</option>
+                                        <option value="2">转载</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label"></label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="reprintedFrom" id="reprintedFrom" lay-verify="req" disabled placeholder="请输入转载来源" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">法规封面</label>
+                                <div class="layui-input-block">
+                                    <div class="upload-img">
+                                        <img src="../img/upload.png" alt="" id="upImg">
+                                        <input type="file" class="upload-inp" id="upInp" accept="image/png, image/jpeg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">法规内容</label>
+                        <div class="layui-input-block">
+                            <!--这里是文本编辑器div-->
+                            <!-- 百度富文本框start -->
+                            <script id="editor" type="text/plain" style="width:110%;height:500px;"></script>
+                            <script type="text/javascript">
+                            var ue = UE.getEditor('editor', {
+                                toolbars: [
+                                    [
+                                        'undo', //撤销
+                                        'bold', //加粗
+                                        'underline', //下划线
+                                        'preview', //预览
+                                        'horizontal', //分隔线
+                                        'inserttitle', //插入标题
+                                        'cleardoc', //清空文档
+                                        'fontfamily', //字体
+                                        'fontsize', //字号
+                                        'paragraph', //段落格式
+                                        'simpleupload', //单图上传
+                                        'insertimage', //多图上传
+                                        'inserttable', //插入表格
+                                        'justifyleft', //居左对齐
+                                        'justifyright', //居右对齐
+                                        'justifycenter', //居中对
+                                        'justifyjustify', //两端对齐
+                                        'forecolor', //字体颜色
+                                        'fullscreen', //全屏
+                                        'edittip ', //编辑提示
+                                        'customstyle', //自定义标题
+                                    ]
+                                ]
+                            });
+                            // 获取值
+                            function getContent() {
+                                return UE.getEditor('editor').getContent();
+                            }
+                            // 设置值
+                            function setContent(content) {
+                                $("#content").html(content);
+                                try {
+                                    UE.getEditor('editor').setContent($("#content").html());
+                                } catch (err) {
+                                    console.log("editor加载中");
+                                }
+                            }
+                            // editor就绪函数
+                            ue.ready(function() {
+                                UE.getEditor('editor').setContent($("#content").html());
+                            })
+                            </script>
+                            <div id="content" style="display:none"></div>
+                            <!-- 百度富文本框end -->
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        layui.use(['form'], function(){
+            var form = layui.form;
+            form.verify({
+                req:function (value,item) {
+                    if(item.name == 'policyTitle'){
+                        if(value.trim() == ''){
+                            return '请输入法规标题！';
+                        }else if(value.length > 100){
+                            return '法规标题长度不能超过100个字符！';
+                        }
+                    }else if(item.name == 'reprintedFrom'){
+                        if(value.length > 50){
+                            return '转载来源长度不能超过50个字符！';
+                        }
+                    }
+                }
+            });
+            var files = null;
+            form.on('select(policyLy)', function(data){
+                if (data.value == '1') {
+                    $('#reprintedFrom').attr('disabled', true).val('');
+                    $('#reprintedFrom').removeAttr('lay-verify');
+                    $('#reprintedFrom').removeAttr('lay-reqText');
+                } else {
+                    $('#reprintedFrom').attr({
+                        'disabled':false,
+                        'lay-verify':"req",
+                        'lay-reqText':"请输入转载来源"
+                    });
+                }
+            });
+            // 封面上传
+            $('#upInp').change(function () {
+                files = $('#upInp')[0].files[0]; //获取文件流
+                $('#upImg').attr('src', getObjectURL(files));
+            });
+            // 判断新增还是修改
+            var ids = GetQueryString('id');
+            if (ids) {
+                $('#pageType').html('修改');
+                // 修改 + 查看
+                // 查看
+                getAjax('/sys/policyInspect/getPolicyInfo', {id: ids}, function (resultMsg) {
+                    form.val('formData', resultMsg.data);
+                    layui.form.render("select");
+                    $('#upImg').attr('src', resultMsg.data.policyUrl);
+                    setContent(resultMsg.data.policyContent);
+                    files = new File([], '', {});
+                    if ( resultMsg.data.policyLy == '1') {
+                        $('#reprintedFrom').attr('disabled', true).val('');
+                        $('#reprintedFrom').removeAttr('lay-verify');
+                        $('#reprintedFrom').removeAttr('lay-reqText');
+                    } else {
+                        $('#reprintedFrom').attr({
+                            'disabled':false,
+                            'lay-verify':"req",
+                            'lay-reqText':"请输入转载来源"
+                        });
+                    }
+                });
+                // 提交表单
+                form.on('submit(formSubmit)', function (data) {
+                    var jsonParam = new FormData();
+                    jsonParam.append('id',ids);
+                    jsonParam.append('imgFile',files);
+                    jsonParam.append('policyUrl',$('#upImg').attr('src'));
+                    jsonParam.append('policyTitle',data.field.policyTitle);
+                    jsonParam.append('type',data.field.type);
+                    jsonParam.append('policyLy',data.field.policyLy);
+                    // 内容
+                    jsonParam.append('policyContent',getContent());
+                    jsonParam.append('reprintedFrom',data.field.reprintedFrom);
+                    imgAjax('/sys/policyInspect/savePolicy', jsonParam, function (resultMsg) {
+                        if (resultMsg.retCode == 0) {
+                            var layerOne = layer.open({
+                                title: '提示',
+                                skin: 'my-layui-layer', //样式类名
+                                icon: 1,
+                                content: '保存成功',
+                                yes: function(){
+                                    layer.close(layerOne);
+                                    window.location.href = 'regulationManage.html';
+                                }
+                            });
+                        } else {
+                            layer.open({
+                                title: '提示',
+                                skin: 'my-layui-layer', //样式类名
+                                content: resultMsg.retMsg
+                            });
+                        }
+                    })
+                    return false; //很重要的一句话，不能删
+                });
+            } else {
+                $('#pageType').html('新增');
+                // 新增
+                // 提交表单
+                form.on('submit(formSubmit)', function (data) {
+                    var newsUrl = $('#upImg').attr('src');
+                    if (newsUrl == '../img/upload.png') {
+                        layer.msg('请选择法规封面', {icon: 5,time:1000,anim: 6});
+                    } else {
+                        var jsonParam = new FormData();
+                        jsonParam.append('imgFile',files);
+                        jsonParam.append('policyTitle',data.field.policyTitle);
+                        jsonParam.append('type',data.field.type);
+                        jsonParam.append('policyLy',data.field.policyLy);
+                        // 内容
+                        jsonParam.append('policyContent',getContent());
+                        jsonParam.append('reprintedFrom',data.field.reprintedFrom);
+                        imgAjax('/sys/policyInspect/savePolicy', jsonParam, function (resultMsg) {
+                            if (resultMsg.retCode == 0) {
+                                var layerOne = layer.open({
+                                    title: '提示',
+                                    skin: 'my-layui-layer', //样式类名
+                                    icon: 1,
+                                    content: '保存成功',
+                                    yes: function(){
+                                        layer.close(layerOne);
+                                        window.location.href = 'regulationManage.html';
+                                    }
+                                });
+                            } else {
+                                layer.open({
+                                    title: '提示',
+                                    skin: 'my-layui-layer', //样式类名
+                                    content: resultMsg.retMsg
+                                });
+                            }
+                        })
+                    }
+                    return false; //很重要的一句话，不能删
+                });
+            }
+            $('#resetBtn').click(function () {
+                setContent("");
+                $('#upImg').attr('src', '../img/upload.png');
+            });
+        });
+    });
+</script>
+</html>

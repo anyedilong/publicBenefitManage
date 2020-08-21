@@ -1,0 +1,304 @@
+<!--physicalSetting.html  体检设置-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>体检设置</title>
+    <script src="../js/page/commen.js"></script>
+    <style>
+        .page_content {
+            padding-bottom: 100px;
+        }
+        .rqfl-ul {
+            display: flex;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .rqfl-li {
+            font-size: 14px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 15px;
+            cursor: pointer;
+            margin-right: 20px;
+            border-radius: 19px 0 19px 0;
+        }
+        .rqfl-li:hover {
+            background: rgba(1, 165, 121, 0.15);
+        }
+        .rqlx-act {
+            background: #01A579 !important;
+            color: #FFFFFF;
+        }
+        .tjyiji-li {
+            border-bottom: 1px solid #cccccc;
+        }
+        .tj-name {
+            padding: 0 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .layui-form-switch{
+            transform: scale(0.7);
+        }
+        .tjerji-ul {
+            padding-left: 20px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .tjerji-li {
+            height: 26px;
+            line-height: 26px;
+            border: 1px solid #d2d2d2;
+            padding: 0 15px;
+            margin: 0px 20px 15px 0;
+            border-radius: 14px 0 0;
+            cursor: pointer;
+        }
+        .tjli-act {
+            background: rgba(1, 165, 121, 0.74);
+            border-color: rgba(1, 165, 121, 0.74);
+            color: #FFFFFF;
+        }
+        .tjyiji-li:hover {
+            background: rgba(1, 165, 121, 0.15);
+        }
+        .wxts .layui-form-label {
+            width: auto;
+            font-size: 12px;
+            text-align: left;
+        }
+        .wxts .layui-input-block {
+            margin-left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageBox">
+        <div class="page_content">
+            <form class="layui-form layui-row" action="" lay-filter="rqlxform" id="rqlxform">
+                <div class="layui-col-md12">
+                    <div class="page_title">
+                        体检关键数据设置
+                        <div class="fr">
+                            <button type="reset" class="layui-btn layui-btn-sm btn-submit btn-orange" lay-filter="reset" id="resetBtn">重置</button>
+                            <button type="button" class="layui-btn layui-btn-sm btn-submit btn-blue " id="reduction">还原</button>
+                            <button type="submit" class="layui-btn layui-btn-sm btn-submit btn-green" lay-submit="" lay-filter="save">提交</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md8">
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <ul class="rqfl-ul" id="rqlxbox">
+                                <!--<li class="rqfl-li rqlx-act" m-code="1">正常人群</li>-->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item wxts">
+                                <label class="layui-form-label">温馨提示:</label>
+                                <div class="layui-input-block">
+                                    <input type="hidden" name="id">
+                                    <textarea name="guideInfo" lay-verify="textMax" class="layui-textarea"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <ul class="tjsz-ul tjyiji-ul" id="tjBox">
+                            <!--
+                            <li class="tjsz-li tjyiji-li">
+                                <div class="tj-name">
+                                    <span class="tjSpan">症状</span>
+                                    <div class="layui-input-block">
+                                        <input type="checkbox" name="close" lay-skin="switch" lay-filter="switchTest">
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="tjsz-li tjyiji-li">
+                                <div class="tj-name">
+                                    <span>一般状况</span>
+                                    <div class="layui-input-block">
+                                        <input type="checkbox" name="close" lay-skin="switch" lay-filter="switchTest">
+                                    </div>
+                                </div>
+                                <ul class="tjsz-ul tjerji-ul">
+                                    <li class="tjsz-li tjerji-li">
+                                        <span class="tjSpan">体温</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            -->
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        layui.use(['layer','form'], function() {
+            var layer = layui.layer;
+            var form = layui.form;
+            getRqlx()
+            function getRqlx () {
+                getAjax('/tjgjsj/getRqlx', {}, function (resultMsg) {
+                    if (resultMsg.retCode == 0) {
+                        $.each(resultMsg.data, function (i, item) {
+                            $('#rqlxbox').append('<li class="rqfl-li" m-code="' + item.code + '">' + item.name + '</li>')
+                        })
+                        $('.rqfl-li').eq(0).addClass('rqlx-act');
+                        getList(resultMsg.data[0].code);
+                    }
+                });
+            }
+            function getList (rqlx) {
+                getAjax('/tjgjsj/queryBaseGjData', {}, function (resultMsg) {
+                    if (resultMsg.retCode == 0) {
+                        var html = '';
+                        $.each(resultMsg.data, function (i1, item1) {
+                            html += '<li class="tjsz-li tjyiji-li">' +
+                                '<div class="tj-name">' +
+                                '<span class="tjSpan">' + item1.name + '</span>' +
+                                '<div class="layui-input-block">' +
+                                '<input type="checkbox" ids="' + item1.id + '" name="close" lay-skin="switch" lay-filter="switchTest">' +
+                                '</div></div>' +
+                                '<ul class="tjsz-ul tjerji-ul">';
+                            $.each(item1.nextData, function (i2, item2) {
+                                html += '<li class="tjsz-li tjerji-li">' +
+                                    '<span class="tjSpan" ids="' + item2.id + '">' + item2.name + '</span></li>';
+                            });
+                            html += '</ul></li>';
+                        });
+                        $('#tjBox').html(html);
+                        form.render();
+                        getXQ(rqlx);
+                    }
+                });
+            };
+            function getXQ (rqlx) {
+                getAjax('/tjgjsj/queryGjInfo', {rqlx: rqlx}, function (resultMsg) {
+                    if (resultMsg.retCode == 0) {
+                        if (resultMsg.data) {
+                            form.val('rqlxform', resultMsg.data);
+                            $.each(resultMsg.data.tjData, function (i, item) {
+                                var child = $('input[type="checkbox"]');
+                                child.each(function(index, item2){
+                                    if ($(item2).attr('ids') == item.basedataId) {
+                                        item2.checked = true;
+                                    }
+                                });
+                                var spans = $('span.tjSpan');
+                                for (var j = 0; j < spans.length; j++) {
+                                    if (spans.eq(j).attr('ids') == item.basedataId) {
+                                        spans.eq(j).parent().addClass('tjli-act');
+                                    }
+                                }
+                                form.render();
+                            })
+                        }
+                    }
+                });
+            };
+            // 人群类型点击
+            $('#rqlxbox').on('click', 'li', function () {
+                $("#rqlxform")[0].reset();
+                $('.rqfl-li').removeClass('rqlx-act');
+                $(this).addClass('rqlx-act');
+                var rqlx = $(this).attr('m-code')
+                getList(rqlx);
+            });
+           // 二级体检项目点击
+            $('.tjyiji-ul').on('click','.tjerji-li',function (e) {
+                $(this).toggleClass('tjli-act');
+                if ($('.tjerji-li').hasClass('tjli-act')) {
+                    var child = $(this).parent().prev().find('input[type="checkbox"]');
+                    child.each(function(index, item){
+                        item.checked = true;
+                    });
+                    form.render('checkbox');
+                }
+            });
+            // 开关事件
+            form.on('switch(switchTest)', function(data){
+                var $this = $(data.elem);
+                if (!data.elem.checked) {
+                    $this.parent().parent().next().find('.tjerji-li').removeClass('tjli-act');
+                }
+                return false;
+            });
+            // 重置事件
+            $('#resetBtn').click(function () {
+                // $("#rqlxform")[0].reset();
+                // 不能清除id
+                $('textarea').val('');
+                var child = $('input[type="checkbox"]');
+                child.each(function(index, item){
+                    item.checked = false;
+                });
+                form.render('checkbox');
+                $('.tjerji-li').removeClass('tjli-act');
+                return false;
+            });
+            // 还原
+            $('#reduction').click(function () {
+                var rqlx = '';
+                for (var i = 0; i < $('.rqfl-li').length; i++) {
+                    if ($('.rqfl-li').eq(i).hasClass('rqlx-act')) {
+                        rqlx = $('.rqfl-li').eq(i).attr('m-code');
+                    }
+                }
+                getXQ(rqlx);
+            });
+            // 保存
+            form.on('submit(save)', function(data){
+                var jsonParam = {};
+                jsonParam.id = data.field.id ? data.field.id : '';
+                jsonParam.guideInfo = data.field.guideInfo;
+                jsonParam.rqlxCode = getSaveData().rqlxCode;
+                jsonParam.gjInfo = getSaveData().gjInfo;
+                getAjax('/tjgjsj/save', jsonParam, function (resultMsg) {
+                    if (resultMsg.retCode == 0) {
+                        var layerOne = layer.open({
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            icon: 1,
+                            content: '成功',
+                            yes: function(){
+                                layer.close(layerOne);
+                                getList(getSaveData().rqlxCode);
+                            }
+                        });
+                    }
+                });
+                return false;
+            });
+            function getSaveData () {
+                var saveObj = {};
+                for (var i = 0; i < $('.rqfl-li').length; i++) {
+                    if ($('.rqfl-li').eq(i).hasClass('rqlx-act')) {
+                        saveObj.rqlxCode = $('.rqfl-li').eq(i).attr('m-code');
+                    }
+                }
+                var inputs = $('.layui-form-onswitch');
+                var spans = $('.tjli-act .tjSpan');
+                var tjArr = [];
+                for(var i = 0;i < inputs.length; i++){
+                    tjArr.push($(inputs[i]).prev().attr('ids'))
+                }
+                for(var i = 0;i < spans.length; i++){
+                    tjArr.push($(spans[i]).attr('ids'))
+                }
+                saveObj.gjInfo = tjArr;
+                return saveObj;
+            }
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/page/commen.js"></script>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        .layui-input{
+            background: #F2F3F7; border: 1px solid #E8EDEB;
+        }
+        .layui-form-item .layui-input-inline{
+            width: 250px;
+        }
+        .page_title{
+            border-bottom: none;
+        }
+        .wrap{
+            position: relative;
+        }
+        .date-input-icon{
+            position: absolute;
+            top:10px; right: 10px;
+        }
+        @media screen and (max-width: 1249px){
+            .conBox>div, .content>li{
+                background: #fff; padding: 30px;  width: 100%; border-radius: 4px; margin-bottom: 30px;
+            }
+            .conBox>div{
+                height: 300px;
+            }
+            .content>li{
+                height: 150px;
+            }
+            .content_num{
+                background: #F2F3F7 !important; padding: 0 !important; height: auto !important; margin-bottom: 0 !important;
+            }
+            .content_num .content{
+                display: flex; flex-flow: row wrap;justify-content: space-between; align-content: space-between;
+            }
+            .content_num .content>li{
+                background: #fff; padding: 30px;  width: calc(50% - 15px); border-radius: 4px;
+            }
+        }
+        @media screen and (min-width: 1250px) {
+            .content {
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: space-between;
+                align-content: space-between;
+                height: calc(100% - 60px);
+            }
+
+            .content > div, .content>li {
+                background: #fff;
+                padding: 30px;
+                width: calc(50% - 15px);
+                border-radius: 4px;
+            }
+
+            .content>li {
+                height: calc(100% / 2 - 15px);
+            }
+
+            .content > div {
+                height: calc(100% / 2 - 15px);
+            }
+
+            .content_num {
+                background: #F2F3F7 !important;
+                padding: 0 !important;
+            }
+
+            .conBox {
+                height: calc(100% - 60px);
+            }
+
+            .conBox {
+                height: calc(100% - 60px);  min-height: 700px;
+            }
+            .content_num .content {
+                height: 100%;
+            }
+        }
+        .home_title{
+            font-size: 18px; padding-bottom: 20px;
+        }
+        .num{
+            height: 44px; line-height: 44px;
+        }
+        .num span{
+            font-size: 24px;
+        }
+        .num .fr{
+            width: 100px; height: 30px;
+        }
+        .num .iconfont{
+            font-size: 33px; color: #E8EDEB;
+        }
+        .color1{
+            color: #1ACDF3;
+        }
+        .color2{
+            color: #01B887;
+        }
+        .color3{
+            color: #469FF1;
+        }
+        .color4{
+            color: #FDB037;
+        }
+        .register{
+            position: relative;
+        }
+        .register>ul{
+            position: absolute;
+            top: 120px; left: 60%;
+        }
+        .register>ul i{
+           display: inline-block; width: 14px; height: 14px; font-size: 14px; margin-right: 10px;
+        }
+        .register>ul li{
+            margin-bottom: 20px; font-size: 16px;
+        }
+        .register>ul span{
+            margin-left: 10px;
+        }
+        .selDate, .selDates{
+            display: inline-block;
+        }
+        .selDate span , .selDates span{
+            display: inline-block; width: 26px; height: 26px; text-align: center; line-height: 26px;
+            color:#fff; background: #bdc7d9;margin-right: 10px; cursor: pointer;
+            border-radius: 4px; font-size: 14px;
+        }
+        .show{
+            background: #1ACDF3 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageBox">
+        <div class="page_title">
+            访问量统计
+            <!--<div class="layui-form fr">-->
+                <!--<div class="layui-form-item">-->
+                    <!--<div class="layui-inline">-->
+                        <!--<div class="layui-input-inline wrap">-->
+                            <!--<input type="text" class="layui-input" id="test6" placeholder=" - ">-->
+                            <!--<i class="layui-icon layui-icon-date date-input-icon"></i>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="content conBox">
+            <div class="register">
+                <div class="home_title">注册&未注册</div>
+                <div class="pie-box" id="bzpie" style="width: 100%;height:calc(100% - 30px);"></div>
+                <ul>
+                    <li><i class="iconfont icon-fangxing color1"></i>已注册 <span class="color1" id="registered"></span></li>
+                    <li><i class="iconfont icon-fangxing color4"></i>未注册 <span class="color4" id="unregistered"></span></li>
+                </ul>
+            </div>
+            <div class="content_num">
+                <ul class="content">
+                    <li>
+                        <div class="home_title">今日访问量</div>
+                        <div class="num">
+                            <span class="color1 count" id="todayCount">0</span>
+                            <div class="fr"><i class="iconfont icon-icon_tj_"></i></div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="home_title">总访问量(人)</div>
+                        <div class="num">
+                            <span class="color2 count" id="totalCount">0</span>
+                            <div class="fr"><i class="iconfont icon-icon_tj_"></i></div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="home_title">日最高访问量</div>
+                        <div class="num">
+                            <span class="color3 num count" id="maxCount">0</span>
+                            <div class="fr"><i class="iconfont icon-icon_tj_"></i></div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="home_title">平均访问量(次)</div>
+                        <div class="num">
+                            <span class="color4 num count" id="averageCount">0</span>
+                            <div class="fr"><i class="iconfont icon-icon_tj_"></i></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div class="home_title">
+                    活跃用户统计
+                    <div class="selDate fr">
+                        <span ids="1">年</span>
+                        <span ids="2">月</span>
+                       <span ids="3" class="show">日</span>
+                    </div>
+                </div>
+                <div id="charts" style="width: 100%;height:calc(100% - 30px)"></div>
+            </div>
+            <div>
+                <div class="home_title">
+                    访问量统计
+                    <div class="selDates fr">
+                        <span ids="1">年</span>
+                        <span ids="2">月</span>
+                       <span class="show" ids="3">日</span>
+                    </div>
+                </div>
+                <div id="lineCharts" style="width: 100%;height:calc(100% - 30px);"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    $(function () {
+        layui.use(['laydate', 'layer'], function(){
+            var laydate = layui.laydate;
+            var layer = layui.layer;
+
+            laydate.render({
+                elem: '#test6'
+                ,eventElem: '.date-input-icon'
+                ,trigger: 'click'
+                , range: true
+                ,done: function(value, date){
+                    console.log(value)
+                }
+            })
+            var myChart = echarts.init(document.getElementById('bzpie'));
+            var lineCharts = echarts.init(document.getElementById('lineCharts'));
+            var myCharts = echarts.init(document.getElementById('charts'));
+            getStatistics()
+            function getStatistics(){
+                getAjax('/visit/visitStat', {visitTime: ''}, function (resultMsg) {
+                    for (var i = 0;i < $('.content .count').length; i++) {
+                        var ids = $('.content .count').eq(i).attr('id');
+                        if(resultMsg.data[ids] != "" && resultMsg.data[ids]){
+                            $('#' + ids).html(resultMsg.data[ids])
+                        }
+                    }
+
+                    // 注册&被注册
+                    $("#registered").text(resultMsg.data.registerCount)
+                    $("#unregistered").text(resultMsg.data.unregisteredCount)
+                    var colors = ['#1ACDF3', '#FDB037']
+                    // 指定图表的配置项和数据
+                    pieOpt = {
+                        animation: false,
+                        color: colors,
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: '{d}%'
+                        },
+                        // legend: {
+                        //     orient: 'vertical',
+                        //     left: '60%',
+                        //     top: 60,
+                        //     data: ['已注册', '未注册']
+                        // },
+                        series: [
+                            {
+                                name: '注册',
+                                type: 'pie',
+                                radius: ['75%', '90%'],
+                                center: ["30%", "45%"],
+                                avoidLabelOverlap: false,
+                                label: {
+                                    show: false,
+                                    position: 'center'
+                                },
+                                emphasis: {
+                                    label: {
+                                        show: true,
+                                        fontSize: '30',
+                                        fontWeight: 'bold'
+                                    }
+                                },
+                                labelLine: {
+                                    show: false
+                                },
+                                data: [
+                                    {value: resultMsg.data.registerCount, name: '已注册'},
+                                    {value: resultMsg.data.unregisteredCount, name: '未注册'},
+                                ]
+                            }
+                        ]
+                    };
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(pieOpt);
+                });
+            }
+
+            $(".selDate span").click(function () {
+                $(this).addClass("show").siblings().removeClass("show")
+                getBar($(this).attr("ids"))
+            })
+            $(".selDates span").click(function () {
+                $(this).addClass("show").siblings().removeClass("show")
+                getCharts($(this).attr("ids"))
+            })
+            var type='3'
+            // 活跃用户统计
+            getBar(type)
+            function getBar(type) {
+                getAjax('/visit/activeUserCharts', {statType: type}, function (resultMsg) {
+                    var baropt = barOpt(resultMsg.data.xlist,resultMsg.data.yList);
+                    myCharts.setOption(baropt);
+                });
+                // 指定图表的配置项和数据
+                function barOpt(xlist, yList) {
+                    var opt = {
+                        color: ["#FDB037","#01B887"],
+                        xAxis: {
+                            type: 'category',
+                            data: xlist,
+                            axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: '#F2F6FA',
+                                    width: '1'//坐标线的宽度
+                                }
+                            },
+                            axisLabel: {
+                                textStyle: {
+                                    color: '#A3A8AE'
+                                }
+                            },
+                        },
+                        yAxis: {
+                            minInterval: 1,
+                            type : 'value',
+                            axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: 'none',//左边线的颜色
+                                    width: '1'//坐标线的宽度
+                                }
+                            },
+                            axisLabel: {
+                                textStyle: {
+                                    color: '#A3A8AE'
+                                }
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: ['#F2F6FA']
+                                }
+
+                            }
+                        },
+                        series: [{
+                            data: yList,
+                            type: 'bar',
+                            // name:'barc',
+                            showBackground: true,
+                            backgroundStyle: {
+                                color: 'rgba(220, 220, 220, 0.8)'
+                            },
+                            barWidth : 15,
+                        },
+                        {
+                            data: yList,
+                            type: 'line',
+                            // name: 'abc',
+                            showBackground: true,
+                            backgroundStyle: {
+                                color: 'rgba(220, 220, 220, 0.8)'
+                            },
+                            symbol: 'none',
+                            smooth: true
+                        }],
+                    };
+                    return opt;
+                }
+            }
+
+            // 访问量charts
+
+            getCharts(type)
+            function getCharts(type){
+                getAjax('/visit/visitCharts', {statType: type}, function (resultMsg) {
+                    var lineopt = lineOpt(resultMsg.data.xlist,resultMsg.data.yList);
+                    lineCharts.setOption(lineopt);
+                });
+                function lineOpt(xlist, yList) {
+                    var opt = {
+                        color: "#FDB037",
+                        xAxis: {
+                            type: 'category',
+                            data: xlist,
+                            axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: '#F2F6FA',
+                                    width: '1'//坐标线的宽度
+                                }
+                            },
+                            axisLabel: {
+                                textStyle: {
+                                    color: '#A3A8AE'
+                                }
+                            },
+                        },
+                        yAxis: {
+                            minInterval: 1,
+                            type : 'value',
+                            axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: 'none',//左边线的颜色
+                                    width: '1'//坐标线的宽度
+                                }
+                            },
+                            axisLabel: {
+                                textStyle: {
+                                    color: '#A3A8AE'
+                                }
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: ['#F2F6FA']
+                                }
+
+                            }
+                        },
+                        series: [{
+                            data: yList,
+                            type: 'line',
+                            symbol: 'circle',
+                            smooth: true
+                        }],
+                    }
+                    return opt;
+                }
+            }
+            window.onresize = chartResize
+            function chartResize () {
+                myChart.resize();
+                myCharts.resize();
+                lineCharts.resize();
+            }
+        });
+    })
+</script>
+</html>

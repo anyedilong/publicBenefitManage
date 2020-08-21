@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/page/commen.js"></script>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        .layui-input{
+            background: #F2F3F7; border: 1px solid #E8EDEB;
+        }
+        .layui-form-item .layui-input-inline{
+            width: 250px;
+        }
+        .page_title{
+            border-bottom: none;
+        }
+        .wrap{
+            position: relative;
+        }
+        .date-input-icon{
+            position: absolute;
+            top:10px; right: 10px;
+        }
+        .conBox>div, .content li{
+            background: #fff; padding: 30px;  width: 100%; border-radius: 4px; margin-bottom: 30px;
+        }
+        .conBox>div{
+            height: 300px;
+        }
+        .content li{
+            height: 150px;
+        }
+        .content_num{
+            background: #F2F3F7 !important; padding: 0 !important; height: auto !important; margin-bottom: 0 !important;
+        }
+        .content_num .content{
+            display: flex; flex-flow: row wrap;justify-content: space-between; align-content: space-between;
+        }
+        .content_num .content li{
+            background: #fff; padding: 30px;  width: calc(50% - 15px); border-radius: 4px;
+        }
+        @media screen and (min-width: 1200px) {
+            .content>div, .content li{
+                background: #fff; padding: 30px;  width: calc(50% - 15px); border-radius: 4px;
+            }
+            .content{
+                display: flex; flex-flow: row wrap;justify-content: space-between; align-content: space-between;
+            }
+            .conBox{
+                height: calc(100% - 60px);
+            }
+            .content_num .content{
+                height: 100%;
+            }
+            .content li{
+                height: calc(100% / 2 - 15px);
+            }
+            .content>div{
+                height: calc(100% / 2 - 15px);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="pageBox">
+    <div class="page_title">
+        访问量统计
+        <div class="layui-form fr">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <div class="layui-input-inline wrap">
+                        <input type="text" class="layui-input" id="test6" placeholder=" - ">
+                        <i class="layui-icon layui-icon-date date-input-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content conBox">
+        <div>
+            <div class="home_title">注册&未注册</div>
+        </div>
+        <div class="content_num">
+            <ul class="content">
+                <li>
+                    <div class="home_title">今日访问量</div>
+                </li>
+                <li>
+                    <div class="home_title">总访问量(人)</div>
+                </li>
+                <li>
+                    <div class="home_title">日最高访问量</div>
+                </li>
+                <li>
+                    <div class="home_title">平均访问量(次)</div>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <div class="home_title">活跃用户统计</div>
+        </div>
+        <div>
+            <div class="home_title">访问量统计</div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#test6'
+            ,eventElem: '.date-input-icon'
+            ,trigger: 'click'
+            , range: true
+        })
+    });
+</script>
+</html>

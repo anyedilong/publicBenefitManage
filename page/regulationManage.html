@@ -1,0 +1,343 @@
+<!--regulationManage.html 法规管理-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>法规管理</title>
+    <script src="../js/page/commen.js"></script>
+    <style>
+        .layui-form-label{
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageBox">
+        <div class="page_title">
+            法规管理
+            <div class="tableAddBtn fr cursorP" id="tableAddBtn">
+                <i class="iconfont fl">&#xe61e;</i>
+                <span class="fl">添加政策法规</span>
+            </div>
+        </div>
+        <form class="layui-form table-form" action="">
+            <div class="layui-inline">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">政策法规标题</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="policyTitle" autocomplete="off" class="layui-input" placeholder="政策法规标题">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">开始日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="startDate" class="layui-input date_scope" id="startDate" placeholder="开始日期">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">结束日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="endDate" class="layui-input date_scope" id="endDate" placeholder="结束日期">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search">搜索</button>
+            </div>
+        </form>
+        <div class="data-card charts_box">
+            <table class="layui-hide" id="table" lay-filter="dataList" lay-skin="row"></table>
+            <!--类别 1：公卫 2：家医-->
+            <script type="text/html" id="trType">
+                {{# if(d.type == '1'){ }}
+                <span class="m-green1" lay-event="state_1">公卫</span>
+                {{# } else if(d.type == '2'){ }}
+                <span class="m-green1" lay-event="state_1">家医</span>
+                {{# } }}
+            </script>
+            <script type="text/html" id="trStatus">
+                {{# if(d.status == '0'){ }}
+                <span class="m-gray4" lay-event="state_1">未提交</span>
+                {{# } else if(d.status == '1'){ }}
+                <span class="m-green1" lay-event="state_1">审核中</span>
+                {{# } else if(d.status == '2') { }}
+                <span class="m-green1" lay-event="state_1">通过</span>
+                {{# } else if(d.status == '3') { }}
+                <span class="m-green1" lay-event="state_1">发表</span>
+                {{# } else if(d.status == '4') { }}
+                <span class="m-green1" lay-event="state_1">置顶</span>
+                {{# } else if(d.status == '5') { }}
+                <span class="m-gray4" lay-event="state_1">退回</span>
+                {{# } else if(d.status == '6') { }}
+                <span class="m-gray4" lay-event="state_1">撤回</span>
+                {{# } }}
+            </script>
+            <!--状态 (0.未提交 1.提交-审核中 2.审核通过 3.发表 4.置顶 5.退回 6.撤回)-->
+            <script type="text/html" id="trText">
+                <span>{{ parent.getText(d.policyContent)}}</span>
+            </script>
+            <script type="text/html" id="trBtn">
+                {{# if(d.status == '0'){ }}
+                {{ parent.getBtnPower(['提交', '修改', '删除','查看'], '', parent.menuFGGL) }}
+<!--                <a class="m-green1" lay-event="提交">提交</a>-->
+<!--                <a class="m-green1" lay-event="修改">修改</a>-->
+<!--                <a class="m-green1" lay-event="删除">删除</a>-->
+                {{# } else if(d.status == '1'){ }}
+                {{ parent.getBtnPower(['修改', '删除', '审核','查看'], '修改,删除', parent.menuFGGL) }}
+<!--                <a class="m-gray4" lay-event="修改">修改</a>-->
+<!--                <a class="m-gray4" lay-event="删除">删除</a>-->
+<!--                <a class="m-green1" lay-event="审核">审核</a>-->
+                {{# } else if(d.status == '2') { }}
+                {{ parent.getBtnPower(['发表', '审核','查看'], '审核', parent.menuFGGL) }}
+<!--                <a class="m-green1" lay-event="发表">发表</a>-->
+<!--                <a class="m-gray4" lay-event="审核">审核</a>-->
+                {{# } else if(d.status == '3') { }}
+                {{ parent.getBtnPower(['置顶', '撤回', '审核','查看'], '审核', parent.menuFGGL) }}
+<!--                <a class="m-green1" lay-event="置顶">置顶</a>-->
+<!--                <a class="m-green1" lay-event="撤回">撤回</a>-->
+<!--                <a class="m-gray4" lay-event="审核">审核</a>-->
+                {{# } else if(d.status == '4') { }}
+                {{ parent.getBtnPower(['取消置顶', '撤回', '审核','查看'], '审核', parent.menuFGGL) }}
+<!--                <a class="m-green1" lay-event="取消置顶">取消置顶</a>-->
+<!--                <a class="m-green1" lay-event="撤回">撤回</a>-->
+<!--                <a class="m-gray4" lay-event="审核">审核</a>-->
+                {{# } else if(d.status == '5') { }}
+                {{ parent.getBtnPower(['提交', '修改', '删除', '审核','查看'], '审核', parent.menuFGGL) }}
+<!--                <a class="m-green1" lay-event="提交">提交</a>-->
+<!--                <a class="m-green1" lay-event="修改">修改</a>-->
+<!--                <a class="m-green1" lay-event="删除">删除</a>-->
+<!--                <a class="m-gray4" lay-event="审核">审核</a>-->
+                {{# } else if(d.status == '6') { }}
+                {{ parent.getBtnPower(['提交', '修改', '删除','查看'], '', parent.menuFGGL) }}
+<!--                <a class="m-green1" lay-event="提交">提交</a>-->
+<!--                <a class="m-green1" lay-event="修改">修改</a>-->
+<!--                <a class="m-green1" lay-event="删除">删除</a>-->
+                {{# } }}
+            </script>
+            <div id="laypage"></div>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        if (parent.menuFGGL.join(',').indexOf('新建') > -1) {
+            $('#tableAddBtn').html('<i class="iconfont fl">&#xe61e;</i>' +
+                '<span class="fl">添加政策法规</span>');
+        } else {
+            $('#tableAddBtn').html('');
+        }
+       var roleType = localStorage.getItem('roleType')
+       if(roleType === '1'){
+          $("#tableAddBtn").hide()
+       }
+        $('#tableAddBtn').click(function () {
+            window.location.href = 'regulationManageAdd.html';
+        });
+        layui.use(['form','laydate','table','laypage'], function(){
+            var $ = layui.$;
+            var form = layui.form;
+            var laydate = layui.laydate;
+            var nowTime = new Date().getTime();
+            var startDate = laydate.render({
+                elem: '#startDate',
+                max: nowTime,
+                done: function (value, date) {
+                    // $('#endDate').val('');
+                    endDate.config.min ={
+                        year: date.year,
+                        month: date.month - 1,
+                        date: date.date
+                    };
+                }
+            });
+            var endDate = laydate.render({
+                elem: '#endDate',
+                max: nowTime,
+                done: function (value, date) {
+                    if ($.trim(value) == '') {
+                        var curDate = new Date();
+                        date = {'date': curDate.getDate(), 'month': curDate.getMonth() + 1, 'year': curDate.getFullYear()};
+                    }
+                    startDate.config.max = date;
+                    startDate.config.max.month = date.month - 1;
+                }
+            });
+            var table = layui.table;
+            var laypage = layui.laypage;
+            var tableobj = {
+                elem: '#table',
+                cellMinWidth: 80,
+                even: true,
+                cols: [[
+                    {field:'createTime', title: '创建时间', width: 120},
+                    {field:'policyTitle', title: '政策法规标题', minWidth: 180},
+                    {field:'type', title: '类别', width: 80, toolbar: '#trType'},
+                    {field:'status', title: '状态', toolbar: '#trStatus', width: 80},
+                    // {field:'policyContent', title: '政策法规内容', minWidth: 100},
+                    {title: '政策法规内容', toolbar: '#trText', minWidth: 100},
+                    {fixed: 'right', title: '管理', toolbar: '#trBtn', width: 200},
+                ]],
+                data: []
+            };
+            var pageobj = {
+                elem: 'laypage',
+                count: 0, //数据总数
+                limit: 10,  //得到每页显示的条数
+                curr: 1,  //得到当前页，以便向服务端请求对应页的数据。
+                prev: '<em><</em>',
+                next: '<em>></em>',
+                layout: ['count', 'prev', 'page', 'next']
+            };
+            //监听工具条
+            table.on('tool(dataList)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var trdata = obj.data; //获得当前行数据
+                var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+                var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+                if ($(this).attr('class') == 'm-green1') {
+                    if(layEvent === '置顶'){
+                        layer.open({
+                            type: 1,
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">您确定要进行置顶操作吗？</div>', //iframe的url
+                            btn: ['关闭', '确认'],
+                            btn2: function (index) {
+                                editStatus(trdata.id, 4,index);
+                                return false;
+                            }
+                        });
+                    } else if(layEvent === '取消置顶'){
+                        layer.open({
+                            type: 1,
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">您确定要进行取消置顶操作吗？</div>', //iframe的url
+                            btn: ['关闭', '确认'],
+                            btn2: function (index) {
+                                editStatus(trdata.id, 3,index);
+                                return false;
+                            }
+                        });
+                    } else if (layEvent === '查看') {
+                        window.location.href = 'regulaManageExamine.html?id=' + trdata.id + '&type=chakan';
+                    } else if (layEvent === '撤回') {
+                        layer.open({
+                            type: 1,
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">您确定要进行撤回操作吗？</div>', //iframe的url
+                            btn: ['关闭', '确认'],
+                            btn2: function (index) {
+                                editStatus(trdata.id, 6,index);
+                                return false;
+                            }
+                        });
+                    } else if (layEvent === '提交') {
+                        layer.open({
+                            type: 1,
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">您确定要提交这条政策法规？</div>', //iframe的url
+                            btn: ['关闭', '确认'],
+                            btn2: function (index) {
+                                editStatus(trdata.id, 1,index);
+                                return false;
+                            }
+                        });
+                    } else if (layEvent === '修改') {
+                        window.location.href = 'regulationManageAdd.html?id=' + trdata.id;
+                    } else if (layEvent === '删除') {
+                        layer.open({
+                            id: 'login',
+                            type: 1,
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">您是否要删除这条法规？</div>', //iframe的url
+                            btn: ['关闭', '确认'],
+                            btn2: function (index) {
+                            getAjax('/sys/policyInspect/operate', {id: trdata.id, status: 0}, function (resultMsg) {
+                                    layer.close(index);
+                                    getList(jsonParam);
+                                });
+                                return false;
+                            }
+                        });
+                    } else if (layEvent === '审核') {
+                        window.location.href = 'regulaManageExamine.html?id=' + trdata.id + '&type=shenhe';
+                    } else if (layEvent === '发表') {
+                        layer.open({
+                            type: 1,
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">您确定要发表这条政策法规？</div>', //iframe的url
+                            btn: ['关闭', '确认'],
+                            btn2: function (index) {
+                                editStatus(trdata.id, 3,index);
+                                return false;
+                            }
+                        });
+                    }
+                }
+            });
+            function editStatus (ids, cstatus,indexLayer) {
+                // 更改状态
+                getAjax('/sys/policyInspect/operate', {id: ids, status: cstatus}, function (resultMsg) {
+                    layer.close(indexLayer);
+                    getList(jsonParam);
+                });
+            }
+            var jsonParam = {
+                pageNo: '1', // 起始页， 默认10
+                pageSize: '10', // 页大小， 默认10
+            };
+            function getList (jsonParam) {
+                getAjax('/sys/policyInspect/getPolicyPage', jsonParam, function (resultMsg) {
+                    tableobj.data = resultMsg.data.list;
+                    pageobj.count = resultMsg.data.count;
+                    table.render(tableobj);
+                    laypage.render(pageobj);
+                });
+            }
+            getList(jsonParam);
+            pageobj.jump = function (obj) {
+                jsonParam.pageSize = obj.limit;
+                jsonParam.pageNo = obj.curr;
+                getAjax('/sys/policyInspect/getPolicyPage', jsonParam, function (resultMsg) {
+                    tableobj.data = resultMsg.data.list;
+                    table.render(tableobj);
+                });
+            };
+            form.on('submit(search)', function (data) {
+                jsonParam.policyTitle = data.field.policyTitle.trim();
+                jsonParam.startDate = data.field.startDate;
+                jsonParam.endDate = data.field.endDate;
+                // jsonParam.status = data.field.status;  //状态
+                getList(jsonParam);
+                return false;
+            });
+        });
+    })
+</script>
+</html>

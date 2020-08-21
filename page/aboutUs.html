@@ -1,0 +1,154 @@
+<!--aboutUs.html  关于我们-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>关于我们</title>
+    <script src="../js/page/commen.js"></script>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <script type="text/javascript" charset="utf-8" src="../../baiduUEditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../baiduUEditor/ueditor.all.min.js"> </script>
+    <script type="text/javascript" charset="utf-8" src="../../baiduUEditor/lang/zh-cn/zh-cn.js"></script>
+    <style>
+        .layui-form-item {
+            margin-bottom: 20px;
+        }
+        .upload-img {
+            width: 120px;
+            height: 120px;
+        }
+    </style>
+</head>
+<body>
+<div class="pageBox">
+    <div class="page_content">
+        <form class="layui-form layui-row" action="" lay-filter="formData">
+            <div class="layui-col-md12">
+                <div class="page_title">
+                    关于我们
+                    <div class="fr">
+                        <button type="button" class="layui-btn layui-btn-sm btn-submit btn-green" lay-submit="" lay-filter="formSubmit">提交</button>
+                        <button type="reset" class="layui-btn layui-btn-sm btn-submit btn-orange" id="resetBtn">重置</button>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md8" style="margin-top: 20px">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">关于我们</label>
+                    <div class="layui-input-block">
+                        <!--这里是文本编辑器div-->
+                        <!-- 百度富文本框start -->
+                        <script id="editor" type="text/plain" style="width:110%;height:500px;"></script>
+                        <script type="text/javascript">
+                        var ue = UE.getEditor('editor', {
+                            toolbars: [
+                                [
+                                    'undo', //撤销
+                                    'bold', //加粗
+                                    'underline', //下划线
+                                    'preview', //预览
+                                    'horizontal', //分隔线
+                                    'inserttitle', //插入标题
+                                    'cleardoc', //清空文档
+                                    'fontfamily', //字体
+                                    'fontsize', //字号
+                                    'paragraph', //段落格式
+                                    'simpleupload', //单图上传
+                                    'insertimage', //多图上传
+                                    'inserttable', //插入表格
+                                    'justifyleft', //居左对齐
+                                    'justifyright', //居右对齐
+                                    'justifycenter', //居中对
+                                    'justifyjustify', //两端对齐
+                                    'forecolor', //字体颜色
+                                    'fullscreen', //全屏
+                                    'edittip ', //编辑提示
+                                    'customstyle', //自定义标题
+                                ]
+                            ]
+                        });
+                        // 获取值
+                        function getContent() {
+                            return UE.getEditor('editor').getContent();
+                        }
+                        // 设置值
+                        function setContent(content) {
+                            $("#content").html(content);
+                            try {
+                                UE.getEditor('editor').setContent($("#content").html());
+                            } catch (err) {
+                                console.log("editor加载中");
+                            }
+                        }
+                        // editor就绪函数
+                        ue.ready(function() {
+                            UE.getEditor('editor').setContent($("#content").html());
+                        })
+                        </script>
+                        <div id="content" style="display:none"></div>
+                        <!-- 百度富文本框end -->
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        layui.use(['form'], function(){
+            var form = layui.form;
+            var files = null;
+            var id= ''
+            // 修改 + 查看
+            // 查看
+            getAjax('/sys/aboutus/queryInfo', {}, function (resultMsg) {
+                setContent(resultMsg.data.content);
+                files = new File([], '', {});
+                id = resultMsg.data.id
+            });
+            // 提交表单
+            form.on('submit(formSubmit)', function (data) {
+                // var jsonParam = new FormData();
+                // jsonParam.append('id',ids);
+                // jsonParam.append('newsfile',files);
+                // jsonParam.append('newsUrl',$('#upImg').attr('src'));
+                // jsonParam.append('newsTitle',data.field.newsTitle);
+                // jsonParam.append('newsLy',data.field.newsLy);
+                // 内容
+                // jsonParam.append('content',getContent());
+                var jsonParam = {
+                    content : getContent(),
+                    id : id
+                }
+                // jsonParam.append('newsCatId',data.field.newsCatId);
+                // jsonParam.append('newsLyDesc',data.field.newsLyDesc);
+                getAjax('/sys/aboutus/save', jsonParam, function (resultMsg) {
+                    if (resultMsg.retCode == 0) {
+                        var layerOne = layer.open({
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            icon: 1,
+                            content: '保存成功',
+                            yes: function(){
+                                layer.close(layerOne);
+                                // window.location.href = 'InfoManage.html';
+                            }
+                        });
+                    } else {
+                        layer.open({
+                            title: '提示',
+                            skin: 'my-layui-layer', //样式类名
+                            content: resultMsg.retMsg
+                        });
+                    }
+                })
+                return false; //很重要的一句话，不能删
+            });
+            $('#resetBtn').click(function () {
+                setContent("");
+            });
+        });
+    });
+</script>
+</html>

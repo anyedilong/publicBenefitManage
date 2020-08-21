@@ -1,0 +1,540 @@
+<!--roleManage.html  角色管理-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>角色管理</title>
+    <script src="../js/page/commen.js"></script>
+    <style>
+        .popup-box > .layui-form{
+            padding: 0;
+        }
+        .popup-box .layui-form-item {
+            margin-bottom: 0;
+        }
+        .layui-form-label{
+            text-align: left;
+        }
+        .layui-form-radio>i{
+            font-size: 16px;
+        }
+        .addRole{
+            padding: 20px 20px 0;
+        }
+        .addRole .layui-form-item{
+            margin-bottom: 15px;
+        }
+        .layui-form-switch{
+            transform: scale(0.7);
+            font-size: 12px;
+            /*height: 16px;*/
+            /*line-height: 16px;*/
+            /*margin-top: 10px;*/
+        }
+        .layui-form-switch i{
+            /*width: 10px;*/
+            /*height: 10px;*/
+            /*top: 3px;*/
+        }
+        .content_box {
+            padding-left: 20px;
+        }
+        .content_box span {
+            display: inline-block;
+            width:105px;
+            height:40px;
+            margin: 0 20px 15px 0;
+            text-align: center;
+            line-height: 40px;
+        }
+        .content_tag span{
+            box-sizing: border-box;
+            display: inline-block;
+            width:105px;
+            height:40px;
+            margin: 0 20px 15px 0;
+            border: 1px solid #babcbf;
+            cursor: pointer;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 4px;
+        }
+        .content_tag span.select_label{
+            background: #01a579;
+            border: 1px solid #01a579;
+            color: #fff;
+        }
+        .page_tag > .select_label {
+            background: #3B76F6 !important;
+            border-color: #3B76F6 !important;
+            color: #fff !important;
+            /*display: inline-block;*/
+        }
+        .func_tag {
+            float: left;
+        }
+        .func_tag > span {
+            font-size: 12px;
+            border-radius: 18px !important;
+            height: 34px !important;
+            line-height: 32px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageBox">
+        <div class="page_title">
+            角色管理
+            <div class="tableAddBtn fr cursorP" id="tableAddBtn">
+                <i class="iconfont fl">&#xe61e;</i>
+                <span class="fl">添加角色</span>
+            </div>
+        </div>
+        <form class="layui-form" action="">
+            <div class="layui-inline">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色编码</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="roleCode" class="layui-input date_scope"  placeholder="角色编码">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="roleName" class="layui-input date_scope" placeholder="角色名称">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search">搜索</button>
+            </div>
+        </form>
+        <div class="data-card charts_box">
+            <table class="layui-hide" id="table" lay-filter="dataList" lay-skin="row"></table>
+            <script type="text/html" id="trBtn">
+                <a class="m-green1" lay-event="授权">授权</a>
+                {{# if(d.roleType == '1'){ }}
+                    <a class="m-gray4" lay-event="">删除</a>
+                {{# }else{ }}
+                    <a class="m-green1" lay-event="删除">删除</a>
+                {{# } }}
+            </script>
+            <div id="laypage"></div>
+        </div>
+    </div>
+    <!--弹框-->
+    <div class="popup-box addRole" id="popup-box">
+        <form class="layui-form" lay-filter="addform" action="" id="addform">
+            <!--<div class="layui-form-item" style="margin-left: 60px">用户名 &nbsp;&nbsp;&nbsp;admin</div>-->
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色编码</label>
+                <div class="layui-input-block">
+                    <input type="hidden" name="id" class="layui-input">
+                    <input type="text" name="roleCode" lay-verify="required|yymcLen" autocomplete="off" class="layui-input" placeholder="请填写角色编码">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="roleName" lay-verify="required|yymcLen" autocomplete="off" class="layui-input" placeholder="请填写角色名称">
+                </div>
+            </div>
+            <div class="">
+                <label class="layui-form-label">角色类型</label>
+                <div class="layui-input-block" id="jslx">
+<!--                    <input type="radio" name="roleType" value="1" title="超级管理员" checked="">-->
+<!--                    <input type="radio" name="roleType" value="2" title="管理员">-->
+<!--                    <input type="radio" name="roleType" value="3" title="普通用户">-->
+                </div>
+            </div>
+            <div class="layui-form-item" style="display: none;">
+                <button id="addBtn" lay-submit lay-filter="addBtn" type="button" class="layui-btn layui-btn-warm">保存</button>
+            </div>
+        </form>
+    </div>
+    <div class="popup-box page_content" id="pop">
+        <form class="layui-form" action="" id="popform">
+<!--            <div class="content_tag">-->
+<!--                <div class="layui-form-item">-->
+<!--                    <label class="layui-form-label">系统消息</label>-->
+<!--                    <div class="layui-input-block">-->
+<!--                        <input type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="content_box func_tag">-->
+<!--                    <span>添加</span>-->
+<!--                </div>-->
+<!--                <div class="content_box func_tag">-->
+<!--                    <span>添加</span>-->
+<!--                </div>-->
+<!--                <div class="content_box func_tag">-->
+<!--                    <span>添加</span>-->
+<!--                </div>-->
+<!--                <div class="content_box func_tag">-->
+<!--                    <span>添加</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="content_tag p1">-->
+<!--                <div class="layui-form-item">-->
+<!--                    <label class="layui-form-label">健康资讯</label>-->
+<!--                    <div class="layui-input-block">-->
+<!--                        <input type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest" lay-text="显示|隐藏">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="content_box content_tag p2">-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <label class="layui-form-label">类别管理</label>-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <input type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest" lay-text="显示|隐藏">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="content_box func_tag">-->
+<!--                        <span>添加</span>-->
+<!--                        <span>修改</span>-->
+<!--                        <span>删除</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="content_box content_tag">-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <label class="layui-form-label">资讯管理</label>-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <input type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest" lay-text="显示|隐藏">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="content_box func_tag">-->
+<!--                        <span>添加</span>-->
+<!--                        <span>发表</span>-->
+<!--                        <span>置顶</span>-->
+<!--                        <span>撤回</span>-->
+<!--                        <span>修改</span>-->
+<!--                        <span>删除</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+        </form>
+    </div>
+</body>
+<script>
+    $(function () {
+       var roleType = localStorage.getItem('roleType')
+       if(roleType === '1'){
+          $("#tableAddBtn").hide()
+       }
+        layui.use(['form','table','laypage'], function(){
+            var form = layui.form;
+            var table = layui.table;
+            var laypage = layui.laypage;
+            // 列表
+            var tableobj = {
+                elem: '#table',
+                cellMinWidth: 80,
+                even: true,
+                cols: [[
+                    {field: 'roleCode', title: '角色编码'},
+                    {field: 'roleName', title: '角色名称', minWidth: 200},
+                    {fixed: 'right', title: '管理', toolbar: '#trBtn', minWidth: 100}
+                ]],
+                data: []
+            };
+            var reg =  /^[0-9a-zA-Z_]*$/
+            form.verify({
+                yymcLen: function (value, item) {
+                    if (value.length > 20) {
+                        if (item.name == 'roleCode') {
+                            return '角色编码不能超过20个字符！';
+                        } else if (item.name == 'roleName') {
+                            return '角色名称不能超过20个字符';
+                        }
+                    } else if(item.name == 'roleCode'){
+                        if(!reg.test(value.trim())){
+                            return '角色编码格式不正确！';
+                        }
+                    }
+                }
+            });
+            var pageobj = {
+                elem: 'laypage',
+                count: 0, //数据总数
+                limit: 10,  //得到每页显示的条数
+                curr: 1,  //得到当前页，以便向服务端请求对应页的数据。
+                layout: ['count', 'prev', 'page', 'next']
+            };
+            var jsonParam = {
+                pageNo: '1', // 起始页， 默认10
+                pageSize: '10', // 页大小， 默认10
+                roleName: '',
+                roleCode: ''
+            };
+            function getList (jsonParam) {
+                tableobj.data = [
+                    {num: 1, code: '消息标题', name: '发布人', status: '0',},
+                    {num: 2, code: '消息标题', name: '发布人', status: '1',},
+                    {num: 3, code: '消息标题', name: '发布人', status: '1',},
+                    {num: 4, code: '消息标题', name: '发布人', status: '1',},
+                ];
+                getAjax('/sys/role/getRoleList', jsonParam, function (resultMsg) {
+                    tableobj.data = resultMsg.data.list;
+                    pageobj.count = resultMsg.data.count;
+                    table.render(tableobj);
+                    laypage.render(pageobj);
+                });
+            }
+            getList(jsonParam);
+            pageobj.jump = function (obj) {
+                jsonParam.pageSize = obj.limit
+                jsonParam.pageNo = obj.curr
+                getAjax('/sys/role/getRoleList', jsonParam, function (resultMsg) {
+                    tableobj.data = resultMsg.data.list;
+                    table.render(tableobj);
+                });
+            };
+            laypage.render(pageobj);
+            form.on('submit(search)', function (data) {
+                jsonParam.roleName = data.field.roleName.trim();
+                jsonParam.roleCode = data.field.roleCode.trim();
+                getList(jsonParam);
+                return false; //很重要的一句话，不能删
+            });
+            //监听工具条
+            var layerEdit = null;
+            var layerDel = null;
+            table.on('tool(dataList)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var formdata = obj.data; //获得当前行数据
+                var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+                var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+                if ($(this).attr('class') == 'm-green1') {
+                    if(layEvent === '授权'){ //修改
+                        layerEdit = layer.open({
+                            type: 1,
+                            skin: 'my-layui-layer', //加上边框
+                            title: '授权',
+                            area: ['750px', '690px'], //宽高
+                            content: $('#pop'),
+                            btn: ['关闭', '确认'],
+                            btn1: function (index) {
+                                layer.close(layerEdit);
+                            },
+                            btn2: function () {
+                                savePower(formdata.id)
+                                return false;
+                            },
+                            success: function(layero, index){
+                                // $('#pop span').removeClass('select_label');
+                                // var aa = $('#pop').find('input[type="checkbox"]');
+                                // aa.each(function(index, item){
+                                //     item.checked = true;
+                                // });
+                                var html = '';
+                                var jsonParam={
+                                    roleId:formdata.id
+                                };
+                                getAjax('/sys/role/queryRoleFunction',jsonParam,function (resultMsg) {
+                                    if(resultMsg.data){
+                                        var arr = resultMsg.data;
+                                        $.each(arr, function (i, item1) {
+                                            html += '<div class="content_tag p1">\n' +
+                                                '                <div class="layui-form-item">\n' +
+                                                '                    <label class="layui-form-label">' + item1.name + '</label>\n' +
+                                                '                    <div class="layui-input-block">\n';
+                                                    if(item1.authority == 1){
+                                                        html += '<input ids="'+item1.id+'" type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest">';
+                                                    }else if(item1.authority == 0){
+                                                        html += '<input ids="'+item1.id+'" type="checkbox" name="open" lay-skin="switch" lay-filter="switchTest">';
+                                                    }
+                                                html += '</div></div>';
+                                                $.each(item1.sysFunctionList, function (i, item2) {
+                                                    if (item2.type === '1') {
+                                                        html+=
+                                                            '<div class="content_box content_tag p2">\n' +
+                                                            '<div class="layui-form-item">\n' +
+                                                            '<label class="layui-form-label">' + item2.name + '</label>\n' +
+                                                            '<div class="layui-input-block">\n';
+                                                        if(item2.authority == 1){
+                                                            html += '<input ids="'+item2.id+'" type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest">';
+                                                        }else if(item2.authority == 0){
+                                                            html += '<input ids="'+item2.id+'" type="checkbox" name="open" lay-skin="switch" lay-filter="switchTest">';
+                                                        }
+                                                            html +='</div>\n' +
+                                                            '</div>\n';
+                                                        $.each(item2.sysFunctionList, function (i, item3) {
+                                                            html += '<div class="content_box func_tag">';
+                                                                    if(item3.authority == 1){
+                                                                        html += '<span ids="'+item3.id+'" class="select_label">' + item3.name + '</span>'
+                                                                    }else if(item3.authority == 0){
+                                                                        html += '<span ids="'+item3.id+'">' + item3.name + '</span>'
+                                                                    }
+                                                                html += '</div>';
+                                                        });
+                                                        html += '</div>';
+                                                    } else {
+                                                        html += '<div class="content_box func_tag">' ;
+                                                        if(item2.authority == 1){
+                                                            html += '<span ids="'+item2.id+'" class="select_label">' + item2.name + '</span>'
+                                                        }else if(item2.authority == 0){
+                                                            html += '<span ids="'+item2.id+'">' + item2.name + '</span>'
+                                                        }
+                                                        html += '</div>';
+                                                    }
+
+                                                });
+                                                html += '</div></div>'
+                                        });
+                                        $('#popform').html(html);
+                                        form.render()
+                                    }
+                                });
+                            }
+                        });
+                    } else if(layEvent === '删除'){
+                        layerDel = layer.open({
+                            type: 1,
+                            title: '提示',
+                            closeBtn: 0,
+                            skin: 'my-layui-layer', //样式类名
+                            area: ['360px', '180px'],
+                            shadeClose: true,
+                            shade: 0.2,
+                            content: '<div class="myMsg">确定删除该条数据吗</div>', //iframe的url
+                            btn: ['关闭', '确认'],
+                            btn2: function () {
+                                getAjax('/sys/role/deleteRole', {roleId: formdata.id}, function (resultMsg) {
+                                    getList(jsonParam);
+                                    layer.close(layerDel);
+                                });
+                                return false;
+                            }
+                        });
+                    }
+                }
+            });
+            $('#pop').on('click','span',function () {
+                $(this).toggleClass('select_label');
+            });
+            // $('#pop').on('click','.layui-form-switch',function () {
+            //     if(!$(this).hasClass('layui-form-onswitch')){
+            //         $(this).parent().parent().siblings('.content_box').find('span').removeClass('select_label');
+            //         $(this).parent().parent().siblings('.content_box').find('.layui-form-switch').removeClass('layui-form-onswitch')
+            //     }
+            // });
+            $('#pop').on('click','.func_tag span',function () {
+                if($(this).hasClass('select_label')){
+                    // $(this).parents('.p1').find('.layui-form-switch').addClass('layui-form-onswitch')
+                    var child = $(this).parents('.p1').children('.layui-form-item').find('input[type="checkbox"]');
+                    var child2 = $(this).parents('.p2').children('.layui-form-item').find('input[type="checkbox"]');
+                    child.each(function(index, item){
+                        item.checked = true;
+                    });
+                    child2.each(function(index, item){
+                        item.checked = true;
+                    });
+                    form.render('checkbox');
+                }
+            });
+            form.on('switch(switchTest)', function(data){
+                var $this = $(data.elem);
+                if (data.elem.checked) {
+
+                    var child = $this.parents('.p1').children('.layui-form-item').find('input[type="checkbox"]')
+                    child.each(function(index, item){
+                        item.checked = true;
+                    });
+                } else {
+                    if (!$this.parent().parent().parent().hasClass('p2')){
+                        var child2 = $this.parents('.p1').find('input[type="checkbox"]')
+                        child2.each(function(index, item){
+                            item.checked = false;
+                        });
+                    }
+                    $this.parent().parent().siblings('.content_box').find('span').removeClass('select_label');
+
+                }
+                form.render('checkbox');
+                return false;
+            });
+            var layerAdd = null;
+            // 新增
+            $('#tableAddBtn').click(function () {
+                $("#addform")[0].reset();
+                layerAdd = layer.open({
+                    type: 1,
+                    skin: 'my-layui-layer', //加上边框
+                    title: '添加角色',
+                    area: ['460px', '320px'], //宽高
+                    content: $('#popup-box'),
+                    shade: false,
+                    btn: ['关闭', '确认'],
+                    btn1: function (index) {
+                        layer.close(layerAdd);
+                    },
+                    btn2: function () {
+                        $('#addBtn').click();
+                        return false;
+                    }
+                });
+            });
+            // $('#editBtn').click(function () {
+            //     alert(1)
+            //     // form.on('submit(editBtn)', function(data){
+            //         savePower()
+            //     // });
+            // });
+            $('#addBtn').click(function () {
+                form.on('submit(addBtn)', function(data){
+                    var addData = data.field;
+                    data.field.id = '';
+                    getAjax('/sys/role/addRole', addData, function (resultMsg) {
+                        layer.close(layerAdd);
+                        getList(jsonParam);
+                    });
+                });
+            });
+
+            // 保存权限
+            function savePower(ids) {
+                var spans = $('span.select_label');
+                var inputs = $('.layui-form-onswitch');
+                var selPower = [];
+                var selPower1 = [];
+                for(var i=0;i<spans.length;i++){
+                    selPower.push($(spans[i]).attr('ids'))
+                }
+                for(var j=0;j<inputs.length;j++){
+                    selPower.push($(inputs[j]).prev().attr('ids'))
+                }
+                selPower.forEach(function(item,index) {
+                    selPower1.push({
+                        id: selPower[index]
+                    })
+                });
+                var jsonParam1 = {
+                    roleId:ids,
+                    sysFunctionList:selPower1
+                };
+                getAjax('/sys/role/roleAuthorization',jsonParam1,function (resultMsg) {
+                    layer.open({
+                        title: '提示',
+                        icon: 1,
+                        content: '保存成功',
+                        skin: 'my-layui-layer',
+                        btn: ['关闭', '确认'],
+                        btn1: function () {
+                            layer.closeAll();
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                            getList(jsonParam);
+                        }
+                    })
+                });
+            }
+            if(localStorage.getItem('roleType') == '1'){
+                $('#jslx').html('<input type="radio" name="roleType" value="2" title="管理员" checked="">')
+            } else if(localStorage.getItem('roleType') == '2'){
+                $('#jslx').html('<input type="radio" name="roleType" value="3" title="普通用户" checked="">')
+            }
+        });
+    });
+</script>
+</html>
